@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="//cdn.staticfile.net/Primer/21.0.7/primer.css" rel="stylesheet" />
+    <link rel="icon" href="https://s2.loli.net/2024/06/16/Ws6G2tMhKBAqvVy.jpg"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="### 最普通的展示 ###
+```javascript
+获取请求的 JSON 数据
+
+var dataParsed = object;
+const formattedDataHtmlFormat = JSON.stringify(dataParsed, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br />');
+pm.visualizer.set(formattedDataHtmlFormat);
+```
+
+
+
+### 带颜色的普通展示 ###
+
+```javascript
+let template = `
+<script src='https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=js' defer></script>
+<pre class='prettyprint'>{{raw}}</pre>
+</div>
+`
+
+pm.visualizer.set(template, {
+	response: object,
+	raw: JSON.stringify(object, null, 2)
+});
+```
+
+
+
+
+
+### 表格形式 ###
+
+```javascript
+// GO TO THE END OF THE TEST SCRIPT.
+var template = `
+<style>
+        .fill,
+body,
+html {
+  height: 100%
+}
+
+#json_vl,
+.td_head,
+.td_row_even,
+.td_row_odd {
+  font-size: small
+}
+
+#json_pnl,
+#xxa,
+.navbar-header,
+.navbar-nav,
+.navbar-nav>li,
+.td_head {
+  float: left
+}
+
+.fill {
+  min-height: 100%
+}
+
+#json_vl {
+  font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace
+}
+
+#widget {
+  width: 100%
+}
+
+.top_size {
+  height: 51px
+}
+
+#all_panels {
+  height: 100%;
+  min-height: 100%
+}
+
+#aboutLnk {
+  position: fixed;
+  right: 10px;
+  top: 15px
+}
+
+#inner_text {
+  display: block;
+  position: absolute;
+  height: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-top: 51px;
+  margin-bottom: 0
+}
+
+#json_pnl {
+  background-color: #ccc;
+  width: 33.3%
+}
+
+#xxa {
+  background-color: #E8E8E8;
+  width: 66.7%
+}
+
+#table_pnl,
+#tree_pnl {
+  background-color: #E8E8E8;
+  float: left;
+  width: 50%
+}
+
+#sharethis {
+  position: fixed;
+  right: 80px;
+  top: 10px
+}
+
+#inner_tbl {
+  padding-left: 2px
+}
+
+.td_row_even {
+  padding: 2px;
+  background-color: #F6F4F0
+}
+
+.td_row_odd {
+  padding: 2px;
+  background-color: #FFF
+}
+
+.td_head {
+  padding: 2px;
+  font-weight: 700
+}
+
+input,
+p,
+select,
+td,
+textarea,
+th {
+  font-size: 1em
+}
+
+table,
+td,
+th {
+  border: 1px solid gray
+}
+
+textarea {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid #333;
+  overflow-y: auto;
+  overflow-x: hidden
+}
+
+*,
+html {
+  font-family: Verdana, Arial, Helvetica, sans-serif
+}
+
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+li,
+p,
+ul {
+  margin: 0;
+  padding: 0
+}
+
+img {
+  border: none
+}
+
+p {
+  margin: 0 0 1em
+}
+
+table {
+  font-size: 100%;
+  background-color: white;
+}
+
+ol.tree {
+  padding: 0 0 0 30px;
+  width: 300px
+}
+
+li {
+  position: relative;
+  margin-left: -15px;
+  list-style: none
+}
+
+li.file {
+  margin-left: -1px !important
+}
+
+li.file a {
+  background: url(leaf.png)0 5px no-repeat;
+  color: #000;
+  padding-left: 12px;
+  text-decoration: none;
+  display: block;
+  font-size: small
+}
+
+li.file a[href$='.css'],
+li.file a[href$='.js'],
+li.file a[href*='.pdf'],
+li.file a[href*='.html'] {
+  background: url(http://www.thecssninja.com/demo/css_tree/document.png)no-repeat
+}
+
+li input {
+  position: absolute;
+  left: 0;
+  margin-left: 0;
+  opacity: 0;
+  z-index: 2;
+  cursor: pointer;
+  height: 1em;
+  width: 1em;
+  top: 0
+}
+
+li input+ol {
+  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small-expand.png)40px -3px no-repeat;
+  margin: -20px 0 0 -44px;
+  height: 1em;
+  padding: 1.563em 0 0 80px
+}
+
+li label.lbl_array,
+li label.lbl_obj {
+  display: block;
+  padding-left: 33px;
+  margin-bottom: 2px
+}
+
+li input+ol>li {
+  display: none;
+  margin-left: -14px !important;
+  padding-left: 1px
+}
+
+li label.lbl_obj {
+  background: url(folder.png)15px 1px no-repeat;
+  cursor: pointer
+}
+
+li label.lbl_array {
+  background: url(array.png)15px 1px no-repeat;
+  cursor: pointer
+}
+
+li input:checked+ol {
+  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small.png)40px -3px no-repeat;
+  margin: -20px 0 0 -44px;
+  padding: 1.563em 0 0 80px;
+  height: auto
+}
+
+li input:checked+ol>li {
+  display: block;
+  margin: 0 0 .125em
+}
+
+li input:checked+ol>li:last-child {
+  margin: 0 0 .063em
+}
+
+.container {
+  width: 970px;
+  max-width: none !important
+}
+
+.col-xs-4 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86, 61, 124, .15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86, 61, 124, .2)
+}
+
+    </style>
+<div id='html'>
+<input type='text' id='json'>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<!--<script src='json2table.js'></script>-->
+<script>
+$(function() {
+    pm.getData((err, data) => {
+        $('#json').val(JSON.stringify(data.json));
+        json2table('#html');
+    });
+});
+
+function call(a) {
+    $('#json').val(JSON.stringify(a, void 0, 2));
+    json2table()
+}
+
+function json2table(selector) {
+    $(selector).html(buildTable(getJsonVar()));
+}
+
+function getJsonVar() {
+    try {
+        var a = $.parseJSON($('#json').val());
+        $('#json').val(JSON.stringify(a, void 0, 2));
+        return a
+    } catch (e) {
+        //return $('#error_msg').text(e.message), $('#errorModal').modal('show'), {}
+        alert(e);
+    }
+}
+
+function buildTable(a) {
+    var e = document.createElement('table'),
+        d, b;
+    if (isArray(a)) return buildArray(a);
+    for (var c in a) 'object' != typeof a[c] || isArray(a[c]) ? 'object' == typeof a[c] && isArray(a[c]) ? (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div><table style='width:100%'>' + $(buildArray(a[c]), !1).html() + '</table>') : (d = e.insertRow(-1), b = d.insertCell(-1), b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div>', d = d.insertCell(-1), d.innerHTML = '<div class='td_row_even'>' +
+        encodeText(a[c]) + '</div>') : (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div><table style='width:100%'>' + $(buildTable(a[c]), !1).html() + '</table>');
+    return e
+}
+
+function buildArray(a) {
+    var e = document.createElement('table'),
+        d, b, c = !1,
+        p = !1,
+        m = {},
+        h = -1,
+        n = 0,
+        l;
+    l = '';
+    if (0 == a.length) return '<div></div>';
+    d = e.insertRow(-1);
+    for (var f = 0; f < a.length; f++)
+        if ('object' != typeof a[f] || isArray(a[f])) 'object' == typeof a[f] && isArray(a[f]) ? (b = d.insertCell(h), b.colSpan = 2, b.innerHTML = '<div class='td_head'></div><table style='width:100%'>' + $(buildArray(a[f]), !1).html() + '</table>', c = !0) : p || (h += 1, p = !0, b = d.insertCell(h), m.empty = h, b.innerHTML = '<div class='td_head'>&nbsp;</div>');
+        else
+            for (var k in a[f]) l =
+                '-' + k, l in m || (c = !0, h += 1, b = d.insertCell(h), m[l] = h, b.innerHTML = '<div class='td_head'>' + encodeText(k) + '</div>');
+    c || e.deleteRow(0);
+    n = h + 1;
+    for (f = 0; f < a.length; f++)
+        if (d = e.insertRow(-1), td_class = isEven(f) ? 'td_row_even' : 'td_row_odd', 'object' != typeof a[f] || isArray(a[f]))
+            if ('object' == typeof a[f] && isArray(a[f]))
+                for (h = m.empty, c = 0; c < n; c++) b = d.insertCell(c), b.className = td_class, l = c == h ? '<table style='width:100%'>' + $(buildArray(a[f]), !1).html() + '</table>' : ' ', b.innerHTML = '<div class='' + td_class + ''>' + encodeText(l) +
+                    '</div>';
+            else
+                for (h = m.empty, c = 0; c < n; c++) b = d.insertCell(c), l = c == h ? a[f] : ' ', b.className = td_class, b.innerHTML = '<div class='' + td_class + ''>' + encodeText(l) + '</div>';
+    else {
+        for (c = 0; c < n; c++) b = d.insertCell(c), b.className = td_class, b.innerHTML = '<div class='' + td_class + ''>&nbsp;</div>';
+        for (k in a[f]) c = a[f], l = '-' + k, h = m[l], b = d.cells[h], b.className = td_class, 'object' != typeof c[k] || isArray(c[k]) ? 'object' == typeof c[k] && isArray(c[k]) ? b.innerHTML = '<table style='width:100%'>' + $(buildArray(c[k]), !1).html() + '</table>' : b.innerHTML =
+            '<div class='' + td_class + ''>' + encodeText(c[k]) + '</div>' : b.innerHTML = '<table style='width:100%'>' + $(buildTable(c[k]), !1).html() + '</table>'
+    }
+    return e
+}
+
+function encodeText(a) {
+    return $('<div />').text(a).html()
+}
+
+function isArray(a) {
+    return '[object Array]' === Object.prototype.toString.call(a)
+}
+
+function isEven(a) {
+    return 0 == a % 2
+}
+</script>`;
+
+
+// In case you only want a specific property, change it here.
+//
+// Default: You can set the entire JSON response using pm.response.json()
+let tableProps = {
+    json: object
+};
+
+pm.visualizer.set(template, tableProps);
+```。">
+<meta property="og:title" content="Postman 可视化JSON">
+<meta property="og:description" content="### 最普通的展示 ###
+```javascript
+获取请求的 JSON 数据
+
+var dataParsed = object;
+const formattedDataHtmlFormat = JSON.stringify(dataParsed, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br />');
+pm.visualizer.set(formattedDataHtmlFormat);
+```
+
+
+
+### 带颜色的普通展示 ###
+
+```javascript
+let template = `
+<script src='https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=js' defer></script>
+<pre class='prettyprint'>{{raw}}</pre>
+</div>
+`
+
+pm.visualizer.set(template, {
+	response: object,
+	raw: JSON.stringify(object, null, 2)
+});
+```
+
+
+
+
+
+### 表格形式 ###
+
+```javascript
+// GO TO THE END OF THE TEST SCRIPT.
+var template = `
+<style>
+        .fill,
+body,
+html {
+  height: 100%
+}
+
+#json_vl,
+.td_head,
+.td_row_even,
+.td_row_odd {
+  font-size: small
+}
+
+#json_pnl,
+#xxa,
+.navbar-header,
+.navbar-nav,
+.navbar-nav>li,
+.td_head {
+  float: left
+}
+
+.fill {
+  min-height: 100%
+}
+
+#json_vl {
+  font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace
+}
+
+#widget {
+  width: 100%
+}
+
+.top_size {
+  height: 51px
+}
+
+#all_panels {
+  height: 100%;
+  min-height: 100%
+}
+
+#aboutLnk {
+  position: fixed;
+  right: 10px;
+  top: 15px
+}
+
+#inner_text {
+  display: block;
+  position: absolute;
+  height: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-top: 51px;
+  margin-bottom: 0
+}
+
+#json_pnl {
+  background-color: #ccc;
+  width: 33.3%
+}
+
+#xxa {
+  background-color: #E8E8E8;
+  width: 66.7%
+}
+
+#table_pnl,
+#tree_pnl {
+  background-color: #E8E8E8;
+  float: left;
+  width: 50%
+}
+
+#sharethis {
+  position: fixed;
+  right: 80px;
+  top: 10px
+}
+
+#inner_tbl {
+  padding-left: 2px
+}
+
+.td_row_even {
+  padding: 2px;
+  background-color: #F6F4F0
+}
+
+.td_row_odd {
+  padding: 2px;
+  background-color: #FFF
+}
+
+.td_head {
+  padding: 2px;
+  font-weight: 700
+}
+
+input,
+p,
+select,
+td,
+textarea,
+th {
+  font-size: 1em
+}
+
+table,
+td,
+th {
+  border: 1px solid gray
+}
+
+textarea {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid #333;
+  overflow-y: auto;
+  overflow-x: hidden
+}
+
+*,
+html {
+  font-family: Verdana, Arial, Helvetica, sans-serif
+}
+
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+li,
+p,
+ul {
+  margin: 0;
+  padding: 0
+}
+
+img {
+  border: none
+}
+
+p {
+  margin: 0 0 1em
+}
+
+table {
+  font-size: 100%;
+  background-color: white;
+}
+
+ol.tree {
+  padding: 0 0 0 30px;
+  width: 300px
+}
+
+li {
+  position: relative;
+  margin-left: -15px;
+  list-style: none
+}
+
+li.file {
+  margin-left: -1px !important
+}
+
+li.file a {
+  background: url(leaf.png)0 5px no-repeat;
+  color: #000;
+  padding-left: 12px;
+  text-decoration: none;
+  display: block;
+  font-size: small
+}
+
+li.file a[href$='.css'],
+li.file a[href$='.js'],
+li.file a[href*='.pdf'],
+li.file a[href*='.html'] {
+  background: url(http://www.thecssninja.com/demo/css_tree/document.png)no-repeat
+}
+
+li input {
+  position: absolute;
+  left: 0;
+  margin-left: 0;
+  opacity: 0;
+  z-index: 2;
+  cursor: pointer;
+  height: 1em;
+  width: 1em;
+  top: 0
+}
+
+li input+ol {
+  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small-expand.png)40px -3px no-repeat;
+  margin: -20px 0 0 -44px;
+  height: 1em;
+  padding: 1.563em 0 0 80px
+}
+
+li label.lbl_array,
+li label.lbl_obj {
+  display: block;
+  padding-left: 33px;
+  margin-bottom: 2px
+}
+
+li input+ol>li {
+  display: none;
+  margin-left: -14px !important;
+  padding-left: 1px
+}
+
+li label.lbl_obj {
+  background: url(folder.png)15px 1px no-repeat;
+  cursor: pointer
+}
+
+li label.lbl_array {
+  background: url(array.png)15px 1px no-repeat;
+  cursor: pointer
+}
+
+li input:checked+ol {
+  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small.png)40px -3px no-repeat;
+  margin: -20px 0 0 -44px;
+  padding: 1.563em 0 0 80px;
+  height: auto
+}
+
+li input:checked+ol>li {
+  display: block;
+  margin: 0 0 .125em
+}
+
+li input:checked+ol>li:last-child {
+  margin: 0 0 .063em
+}
+
+.container {
+  width: 970px;
+  max-width: none !important
+}
+
+.col-xs-4 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #eee;
+  background-color: rgba(86, 61, 124, .15);
+  border: 1px solid #ddd;
+  border: 1px solid rgba(86, 61, 124, .2)
+}
+
+    </style>
+<div id='html'>
+<input type='text' id='json'>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<!--<script src='json2table.js'></script>-->
+<script>
+$(function() {
+    pm.getData((err, data) => {
+        $('#json').val(JSON.stringify(data.json));
+        json2table('#html');
+    });
+});
+
+function call(a) {
+    $('#json').val(JSON.stringify(a, void 0, 2));
+    json2table()
+}
+
+function json2table(selector) {
+    $(selector).html(buildTable(getJsonVar()));
+}
+
+function getJsonVar() {
+    try {
+        var a = $.parseJSON($('#json').val());
+        $('#json').val(JSON.stringify(a, void 0, 2));
+        return a
+    } catch (e) {
+        //return $('#error_msg').text(e.message), $('#errorModal').modal('show'), {}
+        alert(e);
+    }
+}
+
+function buildTable(a) {
+    var e = document.createElement('table'),
+        d, b;
+    if (isArray(a)) return buildArray(a);
+    for (var c in a) 'object' != typeof a[c] || isArray(a[c]) ? 'object' == typeof a[c] && isArray(a[c]) ? (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div><table style='width:100%'>' + $(buildArray(a[c]), !1).html() + '</table>') : (d = e.insertRow(-1), b = d.insertCell(-1), b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div>', d = d.insertCell(-1), d.innerHTML = '<div class='td_row_even'>' +
+        encodeText(a[c]) + '</div>') : (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '<div class='td_head'>' + encodeText(c) + '</div><table style='width:100%'>' + $(buildTable(a[c]), !1).html() + '</table>');
+    return e
+}
+
+function buildArray(a) {
+    var e = document.createElement('table'),
+        d, b, c = !1,
+        p = !1,
+        m = {},
+        h = -1,
+        n = 0,
+        l;
+    l = '';
+    if (0 == a.length) return '<div></div>';
+    d = e.insertRow(-1);
+    for (var f = 0; f < a.length; f++)
+        if ('object' != typeof a[f] || isArray(a[f])) 'object' == typeof a[f] && isArray(a[f]) ? (b = d.insertCell(h), b.colSpan = 2, b.innerHTML = '<div class='td_head'></div><table style='width:100%'>' + $(buildArray(a[f]), !1).html() + '</table>', c = !0) : p || (h += 1, p = !0, b = d.insertCell(h), m.empty = h, b.innerHTML = '<div class='td_head'>&nbsp;</div>');
+        else
+            for (var k in a[f]) l =
+                '-' + k, l in m || (c = !0, h += 1, b = d.insertCell(h), m[l] = h, b.innerHTML = '<div class='td_head'>' + encodeText(k) + '</div>');
+    c || e.deleteRow(0);
+    n = h + 1;
+    for (f = 0; f < a.length; f++)
+        if (d = e.insertRow(-1), td_class = isEven(f) ? 'td_row_even' : 'td_row_odd', 'object' != typeof a[f] || isArray(a[f]))
+            if ('object' == typeof a[f] && isArray(a[f]))
+                for (h = m.empty, c = 0; c < n; c++) b = d.insertCell(c), b.className = td_class, l = c == h ? '<table style='width:100%'>' + $(buildArray(a[f]), !1).html() + '</table>' : ' ', b.innerHTML = '<div class='' + td_class + ''>' + encodeText(l) +
+                    '</div>';
+            else
+                for (h = m.empty, c = 0; c < n; c++) b = d.insertCell(c), l = c == h ? a[f] : ' ', b.className = td_class, b.innerHTML = '<div class='' + td_class + ''>' + encodeText(l) + '</div>';
+    else {
+        for (c = 0; c < n; c++) b = d.insertCell(c), b.className = td_class, b.innerHTML = '<div class='' + td_class + ''>&nbsp;</div>';
+        for (k in a[f]) c = a[f], l = '-' + k, h = m[l], b = d.cells[h], b.className = td_class, 'object' != typeof c[k] || isArray(c[k]) ? 'object' == typeof c[k] && isArray(c[k]) ? b.innerHTML = '<table style='width:100%'>' + $(buildArray(c[k]), !1).html() + '</table>' : b.innerHTML =
+            '<div class='' + td_class + ''>' + encodeText(c[k]) + '</div>' : b.innerHTML = '<table style='width:100%'>' + $(buildTable(c[k]), !1).html() + '</table>'
+    }
+    return e
+}
+
+function encodeText(a) {
+    return $('<div />').text(a).html()
+}
+
+function isArray(a) {
+    return '[object Array]' === Object.prototype.toString.call(a)
+}
+
+function isEven(a) {
+    return 0 == a % 2
+}
+</script>`;
+
+
+// In case you only want a specific property, change it here.
+//
+// Default: You can set the entire JSON response using pm.response.json()
+let tableProps = {
+    json: object
+};
+
+pm.visualizer.set(template, tableProps);
+```。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://yehangchen2013.github.io/post/Postman%20-ke-shi-hua-JSON.html">
+<meta property="og:image" content="https://s2.loli.net/2024/06/16/Ws6G2tMhKBAqvVy.jpg">
+<title>Postman 可视化JSON</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Postman 可视化JSON</h1>
+<div class="title-right">
+    <a href="https://yehangchen2013.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/yehangchen2013/yehangchen2013.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h3>最普通的展示</h3>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-s1">获取请求的</span> <span class="pl-c1">JSON</span> <span class="pl-s1">数据</span>
+
+<span class="pl-k">var</span> <span class="pl-s1">dataParsed</span> <span class="pl-c1">=</span> <span class="pl-s1">object</span><span class="pl-kos">;</span>
+<span class="pl-k">const</span> <span class="pl-s1">formattedDataHtmlFormat</span> <span class="pl-c1">=</span> <span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-s1">dataParsed</span><span class="pl-kos">,</span> <span class="pl-c1">null</span><span class="pl-kos">,</span> <span class="pl-c1">2</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">replace</span><span class="pl-kos">(</span><span class="pl-pds"><span class="pl-c1">/</span> <span class="pl-c1">/</span>g</span><span class="pl-kos">,</span> <span class="pl-s">"&amp;nbsp;"</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">replace</span><span class="pl-kos">(</span><span class="pl-pds"><span class="pl-c1">/</span>\n<span class="pl-c1">/</span>g</span><span class="pl-kos">,</span> <span class="pl-s">"&lt;br /&gt;"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-s1">pm</span><span class="pl-kos">.</span><span class="pl-c1">visualizer</span><span class="pl-kos">.</span><span class="pl-en">set</span><span class="pl-kos">(</span><span class="pl-s1">formattedDataHtmlFormat</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<h3>带颜色的普通展示</h3>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-k">let</span> <span class="pl-s1">template</span> <span class="pl-c1">=</span> <span class="pl-s">`</span>
+<span class="pl-s">&lt;script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autoload=true&amp;amp;skin=sunburst&amp;amp;lang=js" defer&gt;&lt;/script&gt;</span>
+<span class="pl-s">&lt;pre class="prettyprint"&gt;{{raw}}&lt;/pre&gt;</span>
+<span class="pl-s">&lt;/div&gt;</span>
+<span class="pl-s">`</span>
+
+<span class="pl-s1">pm</span><span class="pl-kos">.</span><span class="pl-c1">visualizer</span><span class="pl-kos">.</span><span class="pl-en">set</span><span class="pl-kos">(</span><span class="pl-s1">template</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+	<span class="pl-c1">response</span>: <span class="pl-s1">object</span><span class="pl-kos">,</span>
+	<span class="pl-c1">raw</span>: <span class="pl-c1">JSON</span><span class="pl-kos">.</span><span class="pl-en">stringify</span><span class="pl-kos">(</span><span class="pl-s1">object</span><span class="pl-kos">,</span> <span class="pl-c1">null</span><span class="pl-kos">,</span> <span class="pl-c1">2</span><span class="pl-kos">)</span>
+<span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div>
+<h3>表格形式</h3>
+<div class="highlight highlight-source-js"><pre class="notranslate"><span class="pl-c">// GO TO THE END OF THE TEST SCRIPT.</span>
+<span class="pl-k">var</span> <span class="pl-s1">template</span> <span class="pl-c1">=</span> <span class="pl-s">`</span>
+<span class="pl-s">&lt;style&gt;</span>
+<span class="pl-s">        .fill,</span>
+<span class="pl-s">body,</span>
+<span class="pl-s">html {</span>
+<span class="pl-s">  height: 100%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#json_vl,</span>
+<span class="pl-s">.td_head,</span>
+<span class="pl-s">.td_row_even,</span>
+<span class="pl-s">.td_row_odd {</span>
+<span class="pl-s">  font-size: small</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#json_pnl,</span>
+<span class="pl-s">#xxa,</span>
+<span class="pl-s">.navbar-header,</span>
+<span class="pl-s">.navbar-nav,</span>
+<span class="pl-s">.navbar-nav&gt;li,</span>
+<span class="pl-s">.td_head {</span>
+<span class="pl-s">  float: left</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.fill {</span>
+<span class="pl-s">  min-height: 100%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#json_vl {</span>
+<span class="pl-s">  font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#widget {</span>
+<span class="pl-s">  width: 100%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.top_size {</span>
+<span class="pl-s">  height: 51px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#all_panels {</span>
+<span class="pl-s">  height: 100%;</span>
+<span class="pl-s">  min-height: 100%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#aboutLnk {</span>
+<span class="pl-s">  position: fixed;</span>
+<span class="pl-s">  right: 10px;</span>
+<span class="pl-s">  top: 15px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#inner_text {</span>
+<span class="pl-s">  display: block;</span>
+<span class="pl-s">  position: absolute;</span>
+<span class="pl-s">  height: auto;</span>
+<span class="pl-s">  bottom: 0;</span>
+<span class="pl-s">  top: 0;</span>
+<span class="pl-s">  left: 0;</span>
+<span class="pl-s">  right: 0;</span>
+<span class="pl-s">  margin-top: 51px;</span>
+<span class="pl-s">  margin-bottom: 0</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#json_pnl {</span>
+<span class="pl-s">  background-color: #ccc;</span>
+<span class="pl-s">  width: 33.3%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#xxa {</span>
+<span class="pl-s">  background-color: #E8E8E8;</span>
+<span class="pl-s">  width: 66.7%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#table_pnl,</span>
+<span class="pl-s">#tree_pnl {</span>
+<span class="pl-s">  background-color: #E8E8E8;</span>
+<span class="pl-s">  float: left;</span>
+<span class="pl-s">  width: 50%</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#sharethis {</span>
+<span class="pl-s">  position: fixed;</span>
+<span class="pl-s">  right: 80px;</span>
+<span class="pl-s">  top: 10px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">#inner_tbl {</span>
+<span class="pl-s">  padding-left: 2px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.td_row_even {</span>
+<span class="pl-s">  padding: 2px;</span>
+<span class="pl-s">  background-color: #F6F4F0</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.td_row_odd {</span>
+<span class="pl-s">  padding: 2px;</span>
+<span class="pl-s">  background-color: #FFF</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.td_head {</span>
+<span class="pl-s">  padding: 2px;</span>
+<span class="pl-s">  font-weight: 700</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">input,</span>
+<span class="pl-s">p,</span>
+<span class="pl-s">select,</span>
+<span class="pl-s">td,</span>
+<span class="pl-s">textarea,</span>
+<span class="pl-s">th {</span>
+<span class="pl-s">  font-size: 1em</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">table,</span>
+<span class="pl-s">td,</span>
+<span class="pl-s">th {</span>
+<span class="pl-s">  border: 1px solid gray</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">textarea {</span>
+<span class="pl-s">  -moz-box-sizing: border-box;</span>
+<span class="pl-s">  -webkit-box-sizing: border-box;</span>
+<span class="pl-s">  box-sizing: border-box;</span>
+<span class="pl-s">  display: block;</span>
+<span class="pl-s">  width: 100%;</span>
+<span class="pl-s">  height: 100%;</span>
+<span class="pl-s">  margin: 0;</span>
+<span class="pl-s">  padding: 4px;</span>
+<span class="pl-s">  border: 1px solid #333;</span>
+<span class="pl-s">  overflow-y: auto;</span>
+<span class="pl-s">  overflow-x: hidden</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">*,</span>
+<span class="pl-s">html {</span>
+<span class="pl-s">  font-family: Verdana, Arial, Helvetica, sans-serif</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">form,</span>
+<span class="pl-s">h1,</span>
+<span class="pl-s">h2,</span>
+<span class="pl-s">h3,</span>
+<span class="pl-s">h4,</span>
+<span class="pl-s">h5,</span>
+<span class="pl-s">li,</span>
+<span class="pl-s">p,</span>
+<span class="pl-s">ul {</span>
+<span class="pl-s">  margin: 0;</span>
+<span class="pl-s">  padding: 0</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">img {</span>
+<span class="pl-s">  border: none</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">p {</span>
+<span class="pl-s">  margin: 0 0 1em</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">table {</span>
+<span class="pl-s">  font-size: 100%;</span>
+<span class="pl-s">  background-color: white;</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">ol.tree {</span>
+<span class="pl-s">  padding: 0 0 0 30px;</span>
+<span class="pl-s">  width: 300px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li {</span>
+<span class="pl-s">  position: relative;</span>
+<span class="pl-s">  margin-left: -15px;</span>
+<span class="pl-s">  list-style: none</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li.file {</span>
+<span class="pl-s">  margin-left: -1px !important</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li.file a {</span>
+<span class="pl-s">  background: url(leaf.png)0 5px no-repeat;</span>
+<span class="pl-s">  color: #000;</span>
+<span class="pl-s">  padding-left: 12px;</span>
+<span class="pl-s">  text-decoration: none;</span>
+<span class="pl-s">  display: block;</span>
+<span class="pl-s">  font-size: small</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li.file a[href$='.css'],</span>
+<span class="pl-s">li.file a[href$='.js'],</span>
+<span class="pl-s">li.file a[href*='.pdf'],</span>
+<span class="pl-s">li.file a[href*='.html'] {</span>
+<span class="pl-s">  background: url(http://www.thecssninja.com/demo/css_tree/document.png)no-repeat</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input {</span>
+<span class="pl-s">  position: absolute;</span>
+<span class="pl-s">  left: 0;</span>
+<span class="pl-s">  margin-left: 0;</span>
+<span class="pl-s">  opacity: 0;</span>
+<span class="pl-s">  z-index: 2;</span>
+<span class="pl-s">  cursor: pointer;</span>
+<span class="pl-s">  height: 1em;</span>
+<span class="pl-s">  width: 1em;</span>
+<span class="pl-s">  top: 0</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input+ol {</span>
+<span class="pl-s">  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small-expand.png)40px -3px no-repeat;</span>
+<span class="pl-s">  margin: -20px 0 0 -44px;</span>
+<span class="pl-s">  height: 1em;</span>
+<span class="pl-s">  padding: 1.563em 0 0 80px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li label.lbl_array,</span>
+<span class="pl-s">li label.lbl_obj {</span>
+<span class="pl-s">  display: block;</span>
+<span class="pl-s">  padding-left: 33px;</span>
+<span class="pl-s">  margin-bottom: 2px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input+ol&gt;li {</span>
+<span class="pl-s">  display: none;</span>
+<span class="pl-s">  margin-left: -14px !important;</span>
+<span class="pl-s">  padding-left: 1px</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li label.lbl_obj {</span>
+<span class="pl-s">  background: url(folder.png)15px 1px no-repeat;</span>
+<span class="pl-s">  cursor: pointer</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li label.lbl_array {</span>
+<span class="pl-s">  background: url(array.png)15px 1px no-repeat;</span>
+<span class="pl-s">  cursor: pointer</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input:checked+ol {</span>
+<span class="pl-s">  background: url(http://www.thecssninja.com/demo/css_tree/toggle-small.png)40px -3px no-repeat;</span>
+<span class="pl-s">  margin: -20px 0 0 -44px;</span>
+<span class="pl-s">  padding: 1.563em 0 0 80px;</span>
+<span class="pl-s">  height: auto</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input:checked+ol&gt;li {</span>
+<span class="pl-s">  display: block;</span>
+<span class="pl-s">  margin: 0 0 .125em</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">li input:checked+ol&gt;li:last-child {</span>
+<span class="pl-s">  margin: 0 0 .063em</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.container {</span>
+<span class="pl-s">  width: 970px;</span>
+<span class="pl-s">  max-width: none !important</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">.col-xs-4 {</span>
+<span class="pl-s">  padding-top: 15px;</span>
+<span class="pl-s">  padding-bottom: 15px;</span>
+<span class="pl-s">  background-color: #eee;</span>
+<span class="pl-s">  background-color: rgba(86, 61, 124, .15);</span>
+<span class="pl-s">  border: 1px solid #ddd;</span>
+<span class="pl-s">  border: 1px solid rgba(86, 61, 124, .2)</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">    &lt;/style&gt;</span>
+<span class="pl-s">&lt;div id="html"&gt;</span>
+<span class="pl-s">&lt;input type="text" id="json"&gt;</span>
+<span class="pl-s">&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"&gt;&lt;/script&gt;</span>
+<span class="pl-s">&lt;!--&lt;script src="json2table.js"&gt;&lt;/script&gt;--&gt;</span>
+<span class="pl-s">&lt;script&gt;</span>
+<span class="pl-s">$(function() {</span>
+<span class="pl-s">    pm.getData((err, data) =&gt; {</span>
+<span class="pl-s">        $("#json").val(JSON.stringify(data.json));</span>
+<span class="pl-s">        json2table("#html");</span>
+<span class="pl-s">    });</span>
+<span class="pl-s">});</span>
+<span class="pl-s"></span>
+<span class="pl-s">function call(a) {</span>
+<span class="pl-s">    $("#json").val(JSON.stringify(a, void 0, 2));</span>
+<span class="pl-s">    json2table()</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function json2table(selector) {</span>
+<span class="pl-s">    $(selector).html(buildTable(getJsonVar()));</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function getJsonVar() {</span>
+<span class="pl-s">    try {</span>
+<span class="pl-s">        var a = $.parseJSON($("#json").val());</span>
+<span class="pl-s">        $("#json").val(JSON.stringify(a, void 0, 2));</span>
+<span class="pl-s">        return a</span>
+<span class="pl-s">    } catch (e) {</span>
+<span class="pl-s">        //return $("#error_msg").text(e.message), $("#errorModal").modal("show"), {}</span>
+<span class="pl-s">        alert(e);</span>
+<span class="pl-s">    }</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function buildTable(a) {</span>
+<span class="pl-s">    var e = document.createElement("table"),</span>
+<span class="pl-s">        d, b;</span>
+<span class="pl-s">    if (isArray(a)) return buildArray(a);</span>
+<span class="pl-s">    for (var c in a) "object" != typeof a[c] || isArray(a[c]) ? "object" == typeof a[c] &amp;&amp; isArray(a[c]) ? (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '&lt;div class="td_head"&gt;' + encodeText(c) + '&lt;/div&gt;&lt;table style="width:100%"&gt;' + $(buildArray(a[c]), !1).html() + "&lt;/table&gt;") : (d = e.insertRow(-1), b = d.insertCell(-1), b.innerHTML = "&lt;div class='td_head'&gt;" + encodeText(c) + "&lt;/div&gt;", d = d.insertCell(-1), d.innerHTML = "&lt;div class='td_row_even'&gt;" +</span>
+<span class="pl-s">        encodeText(a[c]) + "&lt;/div&gt;") : (d = e.insertRow(-1), b = d.insertCell(-1), b.colSpan = 2, b.innerHTML = '&lt;div class="td_head"&gt;' + encodeText(c) + '&lt;/div&gt;&lt;table style="width:100%"&gt;' + $(buildTable(a[c]), !1).html() + "&lt;/table&gt;");</span>
+<span class="pl-s">    return e</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function buildArray(a) {</span>
+<span class="pl-s">    var e = document.createElement("table"),</span>
+<span class="pl-s">        d, b, c = !1,</span>
+<span class="pl-s">        p = !1,</span>
+<span class="pl-s">        m = {},</span>
+<span class="pl-s">        h = -1,</span>
+<span class="pl-s">        n = 0,</span>
+<span class="pl-s">        l;</span>
+<span class="pl-s">    l = "";</span>
+<span class="pl-s">    if (0 == a.length) return "&lt;div&gt;&lt;/div&gt;";</span>
+<span class="pl-s">    d = e.insertRow(-1);</span>
+<span class="pl-s">    for (var f = 0; f &lt; a.length; f++)</span>
+<span class="pl-s">        if ("object" != typeof a[f] || isArray(a[f])) "object" == typeof a[f] &amp;&amp; isArray(a[f]) ? (b = d.insertCell(h), b.colSpan = 2, b.innerHTML = '&lt;div class="td_head"&gt;&lt;/div&gt;&lt;table style="width:100%"&gt;' + $(buildArray(a[f]), !1).html() + "&lt;/table&gt;", c = !0) : p || (h += 1, p = !0, b = d.insertCell(h), m.empty = h, b.innerHTML = "&lt;div class='td_head'&gt;&amp;nbsp;&lt;/div&gt;");</span>
+<span class="pl-s">        else</span>
+<span class="pl-s">            for (var k in a[f]) l =</span>
+<span class="pl-s">                "-" + k, l in m || (c = !0, h += 1, b = d.insertCell(h), m[l] = h, b.innerHTML = "&lt;div class='td_head'&gt;" + encodeText(k) + "&lt;/div&gt;");</span>
+<span class="pl-s">    c || e.deleteRow(0);</span>
+<span class="pl-s">    n = h + 1;</span>
+<span class="pl-s">    for (f = 0; f &lt; a.length; f++)</span>
+<span class="pl-s">        if (d = e.insertRow(-1), td_class = isEven(f) ? "td_row_even" : "td_row_odd", "object" != typeof a[f] || isArray(a[f]))</span>
+<span class="pl-s">            if ("object" == typeof a[f] &amp;&amp; isArray(a[f]))</span>
+<span class="pl-s">                for (h = m.empty, c = 0; c &lt; n; c++) b = d.insertCell(c), b.className = td_class, l = c == h ? '&lt;table style="width:100%"&gt;' + $(buildArray(a[f]), !1).html() + "&lt;/table&gt;" : " ", b.innerHTML = "&lt;div class='" + td_class + "'&gt;" + encodeText(l) +</span>
+<span class="pl-s">                    "&lt;/div&gt;";</span>
+<span class="pl-s">            else</span>
+<span class="pl-s">                for (h = m.empty, c = 0; c &lt; n; c++) b = d.insertCell(c), l = c == h ? a[f] : " ", b.className = td_class, b.innerHTML = "&lt;div class='" + td_class + "'&gt;" + encodeText(l) + "&lt;/div&gt;";</span>
+<span class="pl-s">    else {</span>
+<span class="pl-s">        for (c = 0; c &lt; n; c++) b = d.insertCell(c), b.className = td_class, b.innerHTML = "&lt;div class='" + td_class + "'&gt;&amp;nbsp;&lt;/div&gt;";</span>
+<span class="pl-s">        for (k in a[f]) c = a[f], l = "-" + k, h = m[l], b = d.cells[h], b.className = td_class, "object" != typeof c[k] || isArray(c[k]) ? "object" == typeof c[k] &amp;&amp; isArray(c[k]) ? b.innerHTML = '&lt;table style="width:100%"&gt;' + $(buildArray(c[k]), !1).html() + "&lt;/table&gt;" : b.innerHTML =</span>
+<span class="pl-s">            "&lt;div class='" + td_class + "'&gt;" + encodeText(c[k]) + "&lt;/div&gt;" : b.innerHTML = '&lt;table style="width:100%"&gt;' + $(buildTable(c[k]), !1).html() + "&lt;/table&gt;"</span>
+<span class="pl-s">    }</span>
+<span class="pl-s">    return e</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function encodeText(a) {</span>
+<span class="pl-s">    return $("&lt;div /&gt;").text(a).html()</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function isArray(a) {</span>
+<span class="pl-s">    return "[object Array]" === Object.prototype.toString.call(a)</span>
+<span class="pl-s">}</span>
+<span class="pl-s"></span>
+<span class="pl-s">function isEven(a) {</span>
+<span class="pl-s">    return 0 == a % 2</span>
+<span class="pl-s">}</span>
+<span class="pl-s">&lt;/script&gt;`</span><span class="pl-kos">;</span>
+
+
+<span class="pl-c">// In case you only want a specific property, change it here.</span>
+<span class="pl-c">//</span>
+<span class="pl-c">// Default: You can set the entire JSON response using pm.response.json()</span>
+<span class="pl-k">let</span> <span class="pl-s1">tableProps</span> <span class="pl-c1">=</span> <span class="pl-kos">{</span>
+    <span class="pl-c1">json</span>: <span class="pl-s1">object</span>
+<span class="pl-kos">}</span><span class="pl-kos">;</span>
+
+<span class="pl-s1">pm</span><span class="pl-kos">.</span><span class="pl-c1">visualizer</span><span class="pl-kos">.</span><span class="pl-en">set</span><span class="pl-kos">(</span><span class="pl-s1">template</span><span class="pl-kos">,</span> <span class="pl-s1">tableProps</span><span class="pl-kos">)</span><span class="pl-kos">;</span></pre></div></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+</div>
+    <div id="footer">Copyright © <span id="year"></span><a href="https://yehangchen2013.github.io"> Horace的博客 </a>
+<p>
+<span id="runday"></span>Powered by <a href="https://blog.horaceyhc.com" target="_blank">Horace</a>
+</p>
+
+<script>
+if(""!=""){
+    var now=new Date();
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("year").innerHTML=now.getFullYear();
+    if(""!=""){document.getElementById("runday").innerHTML=" • "+"网站运行"+diffDay+"天"+" • ";}
+    else{document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";}
+}
+</script>
+</div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n\n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","yehangchen2013/yehangchen2013.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+</script>
+
+
+</html>
